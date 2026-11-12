@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Campus Locations{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h1 class="h2 fw-bold mb-1">Campus Locations</h1>
+        <p class="text-muted mb-0">Browse campus zones, buildings, and lost &amp; found hotspots.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('locations.zones') }}" class="btn btn-outline-dark btn-sm">Campus Zones</a>
+        <a href="{{ url_for('locations.buildings') }}" class="btn btn-outline-dark btn-sm">Buildings</a>
+    </div>
+</div>
+
+<div class="mb-4 d-flex flex-wrap gap-2">
+    <a href="{{ url_for('locations.index') }}" class="btn btn-sm {{ 'btn-primary' if not selected_zone_id else 'btn-outline-primary' }}">All Zones</a>
+    {% for zone in zones %}
+        <a href="{{ url_for('locations.index', zone_id=zone.id) }}" class="btn btn-sm {{ 'btn-primary' if selected_zone_id == zone.id else 'btn-outline-primary' }}">
+            {{ zone.zone_name }}
+        </a>
+    {% endfor %}
+</div>
+
+{% if locations %}
+    {% for zone_name, zone_locs in locations | groupby('zone.zone_name') %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h2 class="h5 fw-bold mb-0"><i class="bi bi-pin-map me-2 text-primary"></i>{{ zone_name }}</h2>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for loc in zone_locs %}
+                    <a href="{{ url_for('locations.detail', id=loc.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-semibold">{{ loc.location_name }}</div>
+                            <small class="text-muted">
+                                {% if loc.building %}Building: {{ loc.building.building_name }}{% endif %}
+                                {% if loc.room %} &bull; Room {{ loc.room.room_number }}{% endif %}
+                            </small>
+                        </div>
+                        <span class="badge bg-light text-dark border">{{ loc.report_locations|length }} reports</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info">No campus locations found for this selection.</div>
+{% endif %}
+{% endblock %}

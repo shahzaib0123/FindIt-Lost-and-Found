@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Campus Zones{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 fw-bold mb-0">Campus Zones</h1>
+    <a href="{{ url_for('locations.index') }}" class="btn btn-outline-secondary btn-sm">All Locations</a>
+</div>
+
+<div class="row g-3">
+    {% for zone in zones %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h5 fw-bold">{{ zone.zone_name }}</h2>
+                    <p class="small text-muted mb-3">
+                        {{ zone.buildings|length }} building(s) &bull; {{ zone.locations|length }} location(s)
+                    </p>
+                    <a href="{{ url_for('locations.index', zone_id=zone.id) }}" class="btn btn-sm btn-outline-primary mt-auto">
+                        View Locations
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">No campus zones defined yet.</div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

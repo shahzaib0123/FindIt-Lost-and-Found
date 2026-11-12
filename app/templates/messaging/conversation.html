@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Conversation #{{ conversation.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h1 class="h4 fw-bold mb-1">
+                    {% if conversation.report %}
+                        Re: <a href="{{ url_for('items.detail', id=conversation.report.id) }}" class="text-decoration-none">{{ conversation.report.title }}</a>
+                    {% else %}
+                        Conversation #{{ conversation.id }}
+                    {% endif %}
+                </h1>
+                <div class="small text-muted">
+                    Participants:
+                    {% for p in conversation.participants %}
+                        {{ p.user.username }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <a href="{{ url_for('messaging.index') }}" class="btn btn-sm btn-outline-secondary">Back to Inbox</a>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body" style="max-height: 450px; overflow-y: auto;">
+                {% for msg in conversation.messages %}
+                    {% set is_mine = (msg.sender_id == current_user.id) %}
+                    <div class="d-flex flex-column {{ 'align-items-end' if is_mine else 'align-items-start' }} mb-3">
+                        <div class="small text-muted mb-1">
+                            <strong>{{ msg.sender.username }}</strong> &bull;
+                            {{ msg.sent_at.strftime('%Y-%m-%d %H:%M') if msg.sent_at else '' }}
+                        </div>
+                        <div class="p-3 rounded-3 {{ 'bg-primary text-white' if is_mine else 'bg-light border' }}" style="max-width: 80%;">
+                            {{ msg.message_text }}
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center my-4">No messages yet. Say hello below!</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('messaging.conversation', id=conversation.id) }}" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.message_text.label(class='form-label fw-semibold') }}
+                        {{ form.message_text(class='form-control', rows='3', placeholder='Write your message...') }}
+                        {% for error in form.message_text.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        {{ form.submit(class='btn btn-primary') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

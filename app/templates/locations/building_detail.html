@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ building.building_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 fw-bold mb-1">{{ building.building_name }}</h1>
+        <p class="text-muted mb-0">Zone: {{ building.zone.zone_name if building.zone else 'N/A' }}</p>
+    </div>
+    <a href="{{ url_for('locations.buildings') }}" class="btn btn-outline-secondary btn-sm">All Buildings</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h2 class="h5 fw-bold mb-0">Floors &amp; Rooms</h2>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for floor in building.floors | sort(attribute='floor_number') %}
+                    <div class="list-group-item">
+                        <div class="fw-bold mb-2">Floor {{ floor.floor_number }}</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for room in floor.rooms %}
+                                <span class="badge bg-light text-dark border">Room {{ room.room_number }}</span>
+                            {% else %}
+                                <span class="small text-muted">No rooms listed on this floor.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="list-group-item text-muted">No floors listed for this building.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h2 class="h5 fw-bold mb-0">Mapped Locations</h2>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for loc in building.locations %}
+                    <a href="{{ url_for('locations.detail', id=loc.id) }}" class="list-group-item list-group-item-action">
+                        {{ loc.location_name }}
+                    </a>
+                {% else %}
+                    <div class="list-group-item text-muted">No locations mapped to this building yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

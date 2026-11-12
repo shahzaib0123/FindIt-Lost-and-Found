@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Claim - {{ report.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 fw-bold mb-2">Submit Ownership Claim</h1>
+                <p class="text-muted mb-4">
+                    Item: <a href="{{ url_for('items.detail', id=report.id) }}" class="fw-semibold">{{ report.title }}</a>
+                </p>
+
+                <form method="POST" action="{{ url_for('claims.submit', report_id=report.id) }}" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.claim_description.label(class='form-label fw-semibold') }}
+                        {{ form.claim_description(class='form-control', rows='4', placeholder='Describe identifying details that prove this item belongs to you...') }}
+                        {% for error in form.claim_description.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    {% if questions %}
+                        <div class="mb-4 p-3 bg-light rounded border">
+                            <h2 class="h6 fw-bold mb-3">Verification Questions</h2>
+                            {% for q in questions %}
+                                <div class="mb-3">
+                                    <label for="answer_{{ q.id }}" class="form-label fw-semibold">{{ loop.index }}. {{ q.question }}</label>
+                                    <input type="text" name="answer_{{ q.id }}" id="answer_{{ q.id }}" class="form-control" value="{{ request.form.get('answer_' ~ q.id, '') }}" required>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            {{ form.evidence_type.label(class='form-label fw-semibold') }}
+                            {{ form.evidence_type(class='form-select') }}
+                            {% for error in form.evidence_type.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.evidence_file.label(class='form-label fw-semibold') }}
+                            {{ form.evidence_file(class='form-control') }}
+                            {% for error in form.evidence_file.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.evidence_description.label(class='form-label fw-semibold') }}
+                        {{ form.evidence_description(class='form-control', rows='3', placeholder='Any serial numbers, receipt info, or notes about your evidence...') }}
+                        {% for error in form.evidence_description.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('items.detail', id=report.id) }}" class="btn btn-outline-secondary">Cancel</a>
+                        {{ form.submit(class='btn btn-warning fw-semibold px-4') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

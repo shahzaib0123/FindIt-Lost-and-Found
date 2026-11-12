@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Saved Searches{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 fw-bold mb-0">Saved Searches</h1>
+    <a href="{{ url_for('search.index') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-search me-1"></i>New Search
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="list-group list-group-flush">
+        {% for ss in saved_searches %}
+            {% set cat_filter = (ss.filters | selectattr('filter_name', 'equalto', 'category_id') | list | first) %}
+            {% set type_filter = (ss.filters | selectattr('filter_name', 'equalto', 'report_type_id') | list | first) %}
+            <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                <div>
+                    <h5 class="h6 fw-bold mb-1">{{ ss.search_name }}</h5>
+                    <div class="small text-muted">
+                        Keyword: <strong>{{ ss.keyword or 'Any' }}</strong>
+                        {% if ss.filters %}
+                            &bull; Filters:
+                            {% for f in ss.filters %}
+                                <span class="badge bg-light text-dark border">{{ f.filter_name }}={{ f.filter_value }}</span>
+                            {% endfor %}
+                        {% endif %}
+                        &bull; Saved {{ ss.created_at.strftime('%Y-%m-%d') if ss.created_at else '' }}
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('search.index', keyword=ss.keyword or '', category_id=cat_filter.filter_value if cat_filter else 0, report_type_id=type_filter.filter_value if type_filter else 0) }}" class="btn btn-sm btn-outline-primary">
+                        Run Search
+                    </a>
+                    <form method="POST" action="{{ url_for('search.delete_saved', id=ss.id) }}" onsubmit="return confirm('Delete this saved search?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="list-group-item text-muted">
+                You don't have any saved searches yet. Try <a href="{{ url_for('search.index') }}">searching for an item</a> and saving your filters.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

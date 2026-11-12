@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Schedule Shift{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 fw-bold mb-3">Schedule Patrol Shift</h1>
+                <form method="POST" action="{{ url_for('security.create_shift') }}" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.staff_id.label(class='form-label fw-semibold') }}
+                        {{ form.staff_id(class='form-select') }}
+                        {% for error in form.staff_id.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.patrol_zone_id.label(class='form-label fw-semibold') }}
+                        {{ form.patrol_zone_id(class='form-select') }}
+                        {% for error in form.patrol_zone_id.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.shift_date.label(class='form-label fw-semibold') }}
+                        {{ form.shift_date(class='form-control', type='date') }}
+                        {% for error in form.shift_date.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            {{ form.start_time.label(class='form-label fw-semibold') }}
+                            {{ form.start_time(class='form-control', type='time') }}
+                            {% for error in form.start_time.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.end_time.label(class='form-label fw-semibold') }}
+                            {{ form.end_time(class='form-control', type='time') }}
+                            {% for error in form.end_time.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('security.shifts') }}" class="btn btn-outline-secondary">Cancel</a>
+                        {{ form.submit(class='btn btn-primary') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

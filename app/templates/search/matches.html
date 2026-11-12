@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Potential Matches{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 fw-bold mb-1">Potential Item Matches</h1>
+        <p class="text-muted mb-0">Automated and manual matches between lost and found reports.</p>
+    </div>
+    <a href="{{ url_for('search.index') }}" class="btn btn-outline-primary btn-sm">Search Reports</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Lost Report</th>
+                    <th>Found Report</th>
+                    <th>Score</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Detected</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in matches %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('items.detail', id=match.lost_report.id) }}" class="fw-semibold text-decoration-none">
+                                {{ match.lost_report.title }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('items.detail', id=match.found_report.id) }}" class="fw-semibold text-decoration-none">
+                                {{ match.found_report.title }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="badge bg-info text-dark">{{ '%.0f'|format((match.match_score or 0) * 100 if (match.match_score or 0) <= 1 else (match.match_score or 0)) }}%</span>
+                        </td>
+                        <td class="text-capitalize">{{ match.match_method or 'auto' }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if match.match_status == 'confirmed' else ('danger' if match.match_status == 'rejected' else 'warning text-dark') }}">
+                                {{ match.match_status|title }}
+                            </span>
+                        </td>
+                        <td class="small text-muted">{{ match.created_at.strftime('%Y-%m-%d') if match.created_at else '' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No potential matches found yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

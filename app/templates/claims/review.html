@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Review Claim #{{ claim.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 fw-bold mb-2">Review Claim #{{ claim.id }}</h1>
+                <p class="text-muted mb-3">
+                    Item: <a href="{{ url_for('items.detail', id=claim.report.id) }}">{{ claim.report.title }}</a>
+                    &bull; Claimant: {{ claim.claimant.username }}
+                </p>
+
+                <div class="p-3 bg-light rounded border mb-4">
+                    <div class="small fw-bold text-uppercase text-muted mb-1">Claimant's Statement</div>
+                    <p class="mb-0">{{ claim.claim_description }}</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('claims.review', id=claim.id) }}" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.decision.label(class='form-label fw-semibold') }}
+                        {{ form.decision(class='form-select') }}
+                        {% for error in form.decision.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.review_notes.label(class='form-label fw-semibold') }}
+                        {{ form.review_notes(class='form-control', rows='4', placeholder='Provide justification for approving or rejecting this claim...') }}
+                        {% for error in form.review_notes.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('claims.detail', id=claim.id) }}" class="btn btn-outline-secondary">Back to Claim</a>
+                        {{ form.submit(class='btn btn-primary px-4') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

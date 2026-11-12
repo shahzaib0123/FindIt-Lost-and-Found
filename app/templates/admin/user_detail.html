@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}User Detail - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 fw-bold mb-1">{{ user.username }}</h1>
+        <p class="text-muted mb-0">{{ user.email }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary btn-sm">All Users</a>
+        {% if user.id != current_user.id %}
+            <form method="POST" action="{{ url_for('admin.toggle_user_active', id=user.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-{{ 'danger' if user.is_active else 'success' }}">
+                    {{ 'Deactivate Account' if user.is_active else 'Activate Account' }}
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <h2 class="h6 fw-bold mb-3">Account Summary</h2>
+                <p class="mb-2">
+                    <strong>Status:</strong>
+                    <span class="badge bg-{{ 'success' if user.is_active else 'danger' }}">{{ 'Active' if user.is_active else 'Inactive' }}</span>
+                </p>
+                <p class="mb-2">
+                    <strong>Roles:</strong>
+                    {% for ur in user.user_roles %}
+                        <span class="badge bg-primary">{{ ur.role.role_name }}</span>
+                    {% endfor %}
+                </p>
+                {% if user.profile %}
+                    <p class="mb-1"><strong>Name:</strong> {{ user.profile.full_name() }}</p>
+                    <p class="mb-1"><strong>Department:</strong> {{ user.profile.department or 'N/A' }}</p>
+                    <p class="mb-0"><strong>Reg No:</strong> {{ user.profile.reg_no or 'N/A' }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h2 class="h6 fw-bold mb-0">Moderation History</h2>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for act in mod_actions %}
+                    <li class="list-group-item small">
+                        <div class="d-flex justify-content-between">
+                            <strong class="text-uppercase">{{ act.action_type }}</strong>
+                            <span class="text-muted">{{ act.created_at.strftime('%Y-%m-%d') if act.created_at else '' }}</span>
+                        </div>
+                        <div class="text-muted">{{ act.reason or 'No reason recorded' }}</div>
+                    </li>
+                {% else %}
+                    <li class="list-group-item text-muted small">No moderation actions for this user.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h2 class="h5 fw-bold mb-0">Item Reports ({{ reports|length }})</h2>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for r in reports %}
+                    <a href="{{ url_for('items.detail', id=r.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>{{ r.title }}</span>
+                        <span class="badge bg-secondary">{{ r.status.status_name|title }}</span>
+                    </a>
+                {% else %}
+                    <div class="list-group-item text-muted">No reports submitted by this user.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h2 class="h5 fw-bold mb-0">Claims ({{ claims|length }})</h2>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for c in claims %}
+                    <a href="{{ url_for('claims.detail', id=c.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>Claim #{{ c.id }} &mdash; {{ c.report.title }}</span>
+                        <span class="badge bg-{{ 'success' if c.claim_status == 'approved' else ('danger' if c.claim_status == 'rejected' else 'warning text-dark') }}">
+                            {{ c.claim_status|title }}
+                        </span>
+                    </a>
+                {% else %}
+                    <div class="list-group-item text-muted">No claims submitted by this user.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

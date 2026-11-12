@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 fw-bold mb-0">Conversations</h1>
+    <a href="{{ url_for('messaging.notifications') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-bell me-1"></i>Notifications
+        {% if unread_count %}
+            <span class="badge bg-danger ms-1">{{ unread_count }}</span>
+        {% endif %}
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="list-group list-group-flush">
+        {% for conv in conversations %}
+            {% set last_msg = conv.messages[-1] if conv.messages else None %}
+            <a href="{{ url_for('messaging.conversation', id=conv.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-bold">
+                        {% if conv.report %}
+                            {{ conv.report.title }}
+                        {% else %}
+                            Conversation #{{ conv.id }}
+                        {% endif %}
+                    </div>
+                    <div class="small text-muted">
+                        Participants:
+                        {% for p in conv.participants %}
+                            {{ p.user.username }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% if last_msg %}
+                        <div class="small text-secondary mt-1">
+                            <strong>{{ last_msg.sender.username }}:</strong>
+                            {{ last_msg.message_text[:80] }}{% if last_msg.message_text|length > 80 %}...{% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="text-end small text-muted">
+                    <div>{{ conv.updated_at.strftime('%Y-%m-%d %H:%M') if conv.updated_at else '' }}</div>
+                    <span class="badge bg-light text-dark border mt-1">{{ conv.messages|length }} msg</span>
+                </div>
+            </a>
+        {% else %}
+            <div class="list-group-item text-muted">
+                You have no conversations yet. Open an <a href="{{ url_for('items.index') }}">item report</a> to message its reporter.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

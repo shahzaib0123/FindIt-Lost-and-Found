@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}File Incident Report{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 fw-bold mb-3">File Security Incident Report</h1>
+                <form method="POST" action="{{ url_for('security.create_incident') }}" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-7">
+                            {{ form.location_id.label(class='form-label fw-semibold') }}
+                            {{ form.location_id(class='form-select') }}
+                            {% for error in form.location_id.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-5">
+                            {{ form.severity.label(class='form-label fw-semibold') }}
+                            {{ form.severity(class='form-select') }}
+                            {% for error in form.severity.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.report_id.label(class='form-label fw-semibold') }}
+                        {{ form.report_id(class='form-select') }}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.description.label(class='form-label fw-semibold') }}
+                        {{ form.description(class='form-control', rows='5', placeholder='Provide detailed observations of the security incident...') }}
+                        {% for error in form.description.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('security.incidents') }}" class="btn btn-outline-secondary">Cancel</a>
+                        {{ form.submit(class='btn btn-danger') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Claim #{{ claim.id }}{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h1 class="h3 fw-bold mb-0">Claim #{{ claim.id }}</h1>
+                    <span class="badge fs-6 bg-{{ 'success' if claim.claim_status == 'approved' else ('danger' if claim.claim_status == 'rejected' else 'warning text-dark') }}">
+                        {{ claim.claim_status|title }}
+                    </span>
+                </div>
+
+                <p class="mb-2">
+                    <strong>Item Report:</strong>
+                    <a href="{{ url_for('items.detail', id=claim.report.id) }}">{{ claim.report.title }}</a>
+                </p>
+                <p class="mb-2">
+                    <strong>Claimant:</strong>
+                    <a href="{{ url_for('auth.public_profile', user_id=claim.claimant.id) }}">{{ claim.claimant.username }}</a>
+                </p>
+                <p class="small text-muted mb-3">
+                    Submitted: {{ claim.submitted_at.strftime('%Y-%m-%d %H:%M') if claim.submitted_at else '' }}
+                </p>
+
+                <h2 class="h6 fw-bold text-uppercase text-muted">Claim Description</h2>
+                <p class="mb-4">{{ claim.claim_description }}</p>
+
+                <h2 class="h6 fw-bold text-uppercase text-muted">Verification Answers</h2>
+                <ul class="list-group mb-4">
+                    {% for ans in claim.answers %}
+                        <li class="list-group-item">
+                            <div class="fw-semibold">{{ ans.question.question }}</div>
+                            <div class="text-muted">{{ ans.answer }}</div>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-muted">No verification questions were attached to this item.</li>
+                    {% endfor %}
+                </ul>
+
+                <h2 class="h6 fw-bold text-uppercase text-muted">Submitted Evidence</h2>
+                <ul class="list-group">
+                    {% for ev in claim.evidence %}
+                        <li class="list-group-item">
+                            <div><strong>Type:</strong> {{ ev.evidence_type|title }}</div>
+                            {% if ev.description %}<div><strong>Notes:</strong> {{ ev.description }}</div>{% endif %}
+                            {% if ev.evidence_path %}
+                                <div class="mt-2">
+                                    <a href="{{ url_for('static', filename=ev.evidence_path) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-paperclip me-1"></i>View Attachment
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-muted">No supporting evidence attached.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h2 class="h6 fw-bold mb-0">Review History</h2>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for rev in claim.reviews %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="badge bg-{{ 'success' if rev.decision == 'approved' else 'danger' }}">{{ rev.decision|title }}</span>
+                            <small class="text-muted">{{ rev.reviewed_at.strftime('%Y-%m-%d') if rev.reviewed_at else '' }}</small>
+                        </div>
+                        <div class="small"><strong>Reviewer:</strong> {{ rev.reviewer.username }}</div>
+                        {% if rev.review_notes %}
+                            <p class="small text-muted mb-0 mt-1">{{ rev.review_notes }}</p>
+                        {% endif %}
+                    </li>
+                {% else %}
+                    <li class="list-group-item text-muted small">Pending review.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if can_review %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="h6 fw-bold mb-3">Review This Claim</h2>
+                    <form method="POST" action="{{ url_for('claims.review', id=claim.id) }}" novalidate>
+                        {{ review_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ review_form.decision.label(class='form-label fw-semibold') }}
+                            {{ review_form.decision(class='form-select') }}
+                        </div>
+                        <div class="mb-3">
+                            {{ review_form.review_notes.label(class='form-label fw-semibold') }}
+                            {{ review_form.review_notes(class='form-control', rows='3') }}
+                        </div>
+                        <div class="d-grid gap-2">
+                            {{ review_form.submit(class='btn btn-primary') }}
+                            <a href="{{ url_for('claims.review', id=claim.id) }}" class="btn btn-outline-secondary btn-sm">Open Full Review Page</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

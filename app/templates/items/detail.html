@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ report.title }}{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                    <div>
+                        <span class="badge bg-{{ 'danger' if report.report_type.type_name|lower == 'lost' else 'success' }} me-1">
+                            {{ report.report_type.type_name|title }}
+                        </span>
+                        <span class="badge bg-secondary">{{ report.status.status_name|title }}</span>
+                        <h1 class="h3 fw-bold mt-2 mb-0">{{ report.title }}</h1>
+                    </div>
+                    {% if current_user.is_authenticated and (current_user.id == report.user_id or current_user.has_role('admin')) %}
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('items.edit', id=report.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </a>
+                            <form method="POST" action="{{ url_for('items.delete', id=report.id) }}" onsubmit="return confirm('Delete this report permanently?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash me-1"></i>Delete
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if report.images %}
+                    <div class="row g-2 mb-4">
+                        {% for img in report.images %}
+                            <div class="col-md-6">
+                                <div class="border rounded overflow-hidden position-relative">
+                                    <img src="{{ url_for('static', filename=img.image_path) }}" class="img-fluid w-100" alt="{{ report.title }}" style="max-height: 300px; object-fit: cover;">
+                                    {% if img.is_primary %}
+                                        <span class="badge bg-dark position-absolute top-0 start-0 m-2">Primary</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <h2 class="h6 fw-bold text-uppercase text-muted">Description</h2>
+                <p class="mb-4">{{ report.description }}</p>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <strong>Category:</strong>
+                        {{ report.category.category_name if report.category else 'Not specified' }}
+                        {% if report.subcategory %} / {{ report.subcategory.subcategory_name }}{% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Brand:</strong>
+                        {{ report.brand.brand_name if report.brand else 'Not specified' }}
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Condition:</strong>
+                        {{ report.condition.condition_name if report.condition else 'Not specified' }}
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Event Date:</strong>
+                        {{ report.event_date.strftime('%Y-%m-%d') if report.event_date else 'Not specified' }}
+                    </div>
+                    <div class="col-12">
+                        <strong>Location:</strong>
+                        {% if report.report_location and report.report_location.location %}
+                            <a href="{{ url_for('locations.detail', id=report.report_location.location.id) }}">
+                                {{ report.report_location.location.location_name }}
+                            </a>
+                            {% if report.report_location.specific_location %}
+                                ({{ report.report_location.specific_location }})
+                            {% endif %}
+                        {% else %}
+                            Not specified
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if report.tags %}
+                    <div class="mb-3">
+                        <strong class="me-2">Tags:</strong>
+                        {% for rt in report.tags %}
+                            <span class="badge bg-light text-dark border">#{{ rt.tag.tag_name }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if report.status_history %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h6 fw-bold mb-0">Status History</h2>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for h in report.status_history %}
+                        <li class="list-group-item small d-flex justify-content-between">
+                            <div>
+                                <strong>{{ h.new_status.status_name|title }}</strong>
+                                {% if h.old_status %} (from {{ h.old_status.status_name|title }}){% endif %}
+                                &mdash; {{ h.change_reason or 'Updated' }}
+                            </div>
+                            <span class="text-muted">{{ h.changed_at.strftime('%Y-%m-%d %H:%M') if h.changed_at else '' }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <h2 class="h6 fw-bold mb-2">Reported By</h2>
+                <p class="mb-1">
+                    <a href="{{ url_for('auth.public_profile', user_id=report.reporter.id) }}" class="text-decoration-none fw-semibold">
+                        <i class="bi bi-person me-1"></i>{{ report.reporter.username }}
+                    </a>
+                </p>
+                <p class="small text-muted mb-3">
+                    Posted {{ report.created_at.strftime('%Y-%m-%d %H:%M') if report.created_at else '' }}
+                </p>
+
+                {% if current_user.is_authenticated %}
+                    {% if current_user.id != report.user_id %}
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('claims.submit', report_id=report.id) }}" class="btn btn-warning fw-semibold">
+                                <i class="bi bi-hand-index-thumb me-1"></i>Claim This Item
+                            </a>
+                            <form method="POST" action="{{ url_for('messaging.start', report_id=report.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-chat-dots me-1"></i>Message Reporter
+                                </button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('claims.manage_questions', report_id=report.id) }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-question-circle me-1"></i>Manage Verification Questions ({{ report.verification_questions|length }})
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary w-100">Login to Claim or Message</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if current_user.is_authenticated and (current_user.id == report.user_id or current_user.has_role('admin')) %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="h6 fw-bold mb-3">Upload Image</h2>
+                    <form method="POST" action="{{ url_for('items.upload_image', id=report.id) }}" enctype="multipart/form-data">
+                        {{ image_form.hidden_tag() }}
+                        <div class="mb-2">
+                            {{ image_form.image(class='form-control form-control-sm') }}
+                        </div>
+                        <div class="form-check mb-3">
+                            {{ image_form.is_primary(class='form-check-input') }}
+                            {{ image_form.is_primary.label(class='form-check-label small') }}
+                        </div>
+                        <div class="d-grid">
+                            {{ image_form.submit(class='btn btn-sm btn-dark') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

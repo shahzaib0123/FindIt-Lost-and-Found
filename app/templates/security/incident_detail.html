@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Incident #{{ incident.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h1 class="h3 fw-bold mb-0">Incident Report #{{ incident.id }}</h1>
+                    <span class="badge fs-6 bg-{{ 'danger' if incident.severity in ['high', 'critical'] else ('warning text-dark' if incident.severity == 'medium' else 'secondary') }}">
+                        {{ incident.severity|title }} Severity
+                    </span>
+                </div>
+
+                <div class="row g-3 mb-4 small">
+                    <div class="col-sm-6">
+                        <strong>Location:</strong>
+                        <a href="{{ url_for('locations.detail', id=incident.location.id) }}">{{ incident.location.location_name }}</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Date:</strong>
+                        {{ incident.incident_date.strftime('%Y-%m-%d %H:%M') if incident.incident_date else '' }}
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Reported By:</strong> {{ incident.reporter_user.username }}
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Assigned Staff:</strong>
+                        {{ incident.staff.badge_no if incident.staff else 'Unassigned' }}
+                    </div>
+                    {% if incident.item_report %}
+                        <div class="col-12">
+                            <strong>Related Item Report:</strong>
+                            <a href="{{ url_for('items.detail', id=incident.item_report.id) }}">{{ incident.item_report.title }}</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <h2 class="h6 fw-bold text-uppercase text-muted">Description</h2>
+                <p class="mb-4">{{ incident.description }}</p>
+
+                <a href="{{ url_for('security.incidents') }}" class="btn btn-outline-secondary btn-sm">Back to Incidents</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Brands{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 fw-bold mb-0">Item Brands</h1>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">Dashboard</a>
+        <a href="{{ url_for('admin.create_brand') }}" class="btn btn-primary btn-sm">New Brand</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Brand Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for brand in brands %}
+                    <tr>
+                        <td>#{{ brand.id }}</td>
+                        <td class="fw-semibold">{{ brand.brand_name }}</td>
+                        <td class="small text-muted">{{ brand.description or '-' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-4">No brands defined yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

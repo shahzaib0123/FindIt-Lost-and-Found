@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}My Claims{% endblock %}
+
+{% block content %}
+<h1 class="h2 fw-bold mb-4">Claims Dashboard</h1>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h2 class="h5 fw-bold mb-0">Claims I Submitted</h2>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for claim in submitted_claims %}
+                    <a href="{{ url_for('claims.detail', id=claim.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-semibold">{{ claim.report.title }}</div>
+                            <small class="text-muted">Claim #{{ claim.id }} &bull; {{ claim.submitted_at.strftime('%Y-%m-%d') if claim.submitted_at else '' }}</small>
+                        </div>
+                        <span class="badge bg-{{ 'success' if claim.claim_status == 'approved' else ('danger' if claim.claim_status == 'rejected' else 'warning text-dark') }}">
+                            {{ claim.claim_status|title }}
+                        </span>
+                    </a>
+                {% else %}
+                    <div class="list-group-item text-muted">You have not submitted any claims yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h2 class="h5 fw-bold mb-0">Claims Received on My Reports</h2>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for claim in received_claims %}
+                    <a href="{{ url_for('claims.detail', id=claim.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-semibold">{{ claim.report.title }}</div>
+                            <small class="text-muted">By {{ claim.claimant.username }} &bull; {{ claim.submitted_at.strftime('%Y-%m-%d') if claim.submitted_at else '' }}</small>
+                        </div>
+                        <span class="badge bg-{{ 'success' if claim.claim_status == 'approved' else ('danger' if claim.claim_status == 'rejected' else 'warning text-dark') }}">
+                            {{ claim.claim_status|title }}
+                        </span>
+                    </a>
+                {% else %}
+                    <div class="list-group-item text-muted">No claims received on your reports yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

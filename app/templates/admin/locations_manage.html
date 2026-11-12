@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Locations{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 fw-bold mb-0">Manage Campus Locations</h1>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">Dashboard</a>
+        <a href="{{ url_for('admin.create_location') }}" class="btn btn-primary btn-sm">New Location</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Location Name</th>
+                    <th>Zone</th>
+                    <th>Building</th>
+                    <th>Room</th>
+                    <th>Coordinates</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loc in locations %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('locations.detail', id=loc.id) }}" class="fw-semibold text-decoration-none">
+                                {{ loc.location_name }}
+                            </a>
+                        </td>
+                        <td>{{ loc.zone.zone_name if loc.zone else '-' }}</td>
+                        <td>{{ loc.building.building_name if loc.building else '-' }}</td>
+                        <td>{{ loc.room.room_number if loc.room else '-' }}</td>
+                        <td class="small text-muted">
+                            {% if loc.latitude is not none and loc.longitude is not none %}
+                                {{ loc.latitude }}, {{ loc.longitude }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">No campus locations defined yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

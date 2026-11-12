@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}About FindIt{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="fw-bold mb-3">About FindIt</h1>
+                <p class="lead text-muted">
+                    FindIt is a Smart Campus Lost &amp; Found Platform designed to streamline how lost and found items are reported, verified, stored, and returned across campus.
+                </p>
+                <hr class="my-4">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <h5 class="fw-bold"><i class="bi bi-megaphone text-warning me-2"></i>Report Quickly</h5>
+                        <p class="small text-muted">Submit structured lost or found reports with categories, brands, campus locations, tags, and photos.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="fw-bold"><i class="bi bi-shield-check text-success me-2"></i>Verify Ownership</h5>
+                        <p class="small text-muted">Claim workflows use verification questions, evidence uploads, and security/owner reviews to prevent false claims.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="fw-bold"><i class="bi bi-building-lock text-primary me-2"></i>Custody Tracking</h5>
+                        <p class="small text-muted">Campus security manages secure storage locations, custody logs, patrol shifts, and incident tracking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 text-center">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3">
+                    <h3 class="fw-bold mb-0">{{ stats.total_reports }}</h3>
+                    <span class="text-muted small">Reports Filed</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3">
+                    <h3 class="fw-bold mb-0">{{ stats.total_users }}</h3>
+                    <span class="text-muted small">Registered Members</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3">
+                    <h3 class="fw-bold mb-0">{{ stats.total_claims }}</h3>
+                    <span class="text-muted small">Claims Processed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

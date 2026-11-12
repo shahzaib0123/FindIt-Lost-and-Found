@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 fw-bold mb-3 text-center">Create Your Account</h1>
+                <form method="POST" action="{{ url_for('auth.register') }}" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.username.label(class='form-label fw-semibold') }}
+                        {{ form.username(class='form-control', placeholder='Choose a username') }}
+                        {% for error in form.username.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.email.label(class='form-label fw-semibold') }}
+                        {{ form.email(class='form-control', placeholder='you@findit.edu') }}
+                        {% for error in form.email.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.password.label(class='form-label fw-semibold') }}
+                        {{ form.password(class='form-control', placeholder='At least 8 characters') }}
+                        {% for error in form.password.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.confirm_password.label(class='form-label fw-semibold') }}
+                        {{ form.confirm_password(class='form-control', placeholder='Re-enter password') }}
+                        {% for error in form.confirm_password.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.submit(class='btn btn-warning btn-lg fw-semibold') }}
+                    </div>
+                </form>
+                <hr class="my-4">
+                <p class="text-center mb-0 small">
+                    Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

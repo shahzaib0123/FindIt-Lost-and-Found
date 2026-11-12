@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Report - {{ report.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 fw-bold mb-3">Edit Item Report</h1>
+                <form method="POST" action="{{ url_for('items.edit', id=report.id) }}" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            {{ form.title.label(class='form-label fw-semibold') }}
+                            {{ form.title(class='form-control') }}
+                            {% for error in form.title.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.report_type_id.label(class='form-label fw-semibold') }}
+                            {{ form.report_type_id(class='form-select') }}
+                            {% for error in form.report_type_id.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.description.label(class='form-label fw-semibold') }}
+                        {{ form.description(class='form-control', rows='4') }}
+                        {% for error in form.description.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            {{ form.category_id.label(class='form-label fw-semibold') }}
+                            {{ form.category_id(class='form-select') }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.subcategory_id.label(class='form-label fw-semibold') }}
+                            {{ form.subcategory_id(class='form-select') }}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            {{ form.brand_id.label(class='form-label fw-semibold') }}
+                            {{ form.brand_id(class='form-select') }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.condition_id.label(class='form-label fw-semibold') }}
+                            {{ form.condition_id(class='form-select') }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form.event_date.label(class='form-label fw-semibold') }}
+                            {{ form.event_date(class='form-control', type='date') }}
+                            {% for error in form.event_date.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            {{ form.location_id.label(class='form-label fw-semibold') }}
+                            {{ form.location_id(class='form-select') }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.specific_location.label(class='form-label fw-semibold') }}
+                            {{ form.specific_location(class='form-control') }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.tags.label(class='form-label fw-semibold') }}
+                        {{ form.tags(class='form-control') }}
+                    </div>
+
+                    {% if statuses %}
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-5">
+                                <label for="status_id" class="form-label fw-semibold">Report Status</label>
+                                <select name="status_id" id="status_id" class="form-select">
+                                    {% for st in statuses %}
+                                        <option value="{{ st.id }}" {{ 'selected' if st.id == report.status_id else '' }}>
+                                            {{ st.status_name|title }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-7">
+                                <label for="status_reason" class="form-label fw-semibold">Status Change Reason (Optional)</label>
+                                <input type="text" name="status_reason" id="status_reason" class="form-control" placeholder="Reason if updating status">
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('items.detail', id=report.id) }}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

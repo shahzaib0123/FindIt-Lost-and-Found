@@ -1,0 +1,262 @@
+/* ==========================================================================
+   FindIt — Custom Stylesheet (Complements Bootstrap 5)
+   ========================================================================== */
+
+:root {
+  --findit-primary: #2563eb;
+  --findit-primary-dark: #1d4ed8;
+  --findit-accent: #0ea5e9;
+  --findit-lost: #dc2626;
+  --findit-lost-bg: #fee2e2;
+  --findit-found: #16a34a;
+  --findit-found-bg: #dcfce7;
+  --findit-surface: #f8fafc;
+  --findit-border: #e2e8f0;
+  --findit-text-muted: #64748b;
+  --findit-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06);
+  --findit-shadow-md: 0 10px 24px rgba(15, 23, 42, 0.1);
+}
+
+/* Sticky Footer Layout */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--findit-surface);
+  color: #1e293b;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+main,
+.main-content {
+  flex: 1 0 auto;
+}
+
+footer,
+.footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  border-top: 1px solid var(--findit-border);
+}
+
+/* Navbar Styling */
+.navbar {
+  box-shadow: var(--findit-shadow-sm);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.navbar-nav .nav-link {
+  font-weight: 500;
+  border-radius: 0.375rem;
+  padding: 0.45rem 0.75rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.navbar-nav .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+}
+
+/* Hero Section */
+.hero-section,
+.findit-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #0284c7 100%);
+  color: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: var(--findit-shadow-md);
+}
+
+/* Cards & Subtle Hover Effects */
+.card {
+  border: 1px solid var(--findit-border);
+  border-radius: 0.65rem;
+  box-shadow: var(--findit-shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.card-hover:hover,
+.report-card:hover,
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--findit-shadow-md);
+  border-color: #cbd5e1;
+}
+
+.stat-card {
+  border-left: 4px solid var(--findit-primary);
+}
+
+.stat-card.stat-lost {
+  border-left-color: var(--findit-lost);
+}
+
+.stat-card.stat-found {
+  border-left-color: var(--findit-found);
+}
+
+.stat-card.stat-returned {
+  border-left-color: var(--findit-accent);
+}
+
+/* Item Images */
+.item-card-img {
+  height: 190px;
+  width: 100%;
+  object-fit: cover;
+  border-top-left-radius: calc(0.65rem - 1px);
+  border-top-right-radius: calc(0.65rem - 1px);
+  background-color: #e2e8f0;
+}
+
+.item-placeholder-img {
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: var(--findit-text-muted);
+  border-top-left-radius: calc(0.65rem - 1px);
+  border-top-right-radius: calc(0.65rem - 1px);
+}
+
+.item-detail-img {
+  max-height: 420px;
+  width: 100%;
+  object-fit: contain;
+  background-color: #f1f5f9;
+  border-radius: 0.5rem;
+}
+
+/* Badges for Lost / Found / Statuses */
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.badge-lost {
+  background-color: var(--findit-lost-bg);
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.badge-found {
+  background-color: var(--findit-found-bg);
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.badge-status-open {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.badge-status-matched {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge-status-claimed {
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-status-returned,
+.badge-status-approved {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.badge-status-closed,
+.badge-status-rejected {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.badge-status-pending {
+  background-color: #ffedd5;
+  color: #9a3412;
+}
+
+/* Messaging Thread */
+.message-thread {
+  max-height: 460px;
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border: 1px solid var(--findit-border);
+  border-radius: 0.5rem;
+}
+
+.message-bubble {
+  max-width: 78%;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+  word-wrap: break-word;
+}
+
+.message-sent {
+  margin-left: auto;
+  background-color: var(--findit-primary);
+  color: #ffffff;
+  border-bottom-right-radius: 0.2rem;
+}
+
+.message-received {
+  margin-right: auto;
+  background-color: #ffffff;
+  border: 1px solid var(--findit-border);
+  color: #1e293b;
+  border-bottom-left-radius: 0.2rem;
+}
+
+/* Tables & Forms */
+.table > tbody > tr > td,
+.table > thead > tr > th {
+  vertical-align: middle;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--findit-primary);
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15);
+}
+
+/* Flash Alerts Transition */
+.alert {
+  border-radius: 0.5rem;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.alert.fade-out {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* Utility Helpers */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}

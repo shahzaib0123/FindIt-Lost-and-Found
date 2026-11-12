@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Location{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 fw-bold mb-3">Create Campus Location</h1>
+                <form method="POST" action="{{ url_for('admin.create_location') }}" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.location_name.label(class='form-label fw-semibold') }}
+                        {{ form.location_name(class='form-control', placeholder='e.g., Main Library Lobby') }}
+                        {% for error in form.location_name.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.zone_id.label(class='form-label fw-semibold') }}
+                        {{ form.zone_id(class='form-select') }}
+                        {% for error in form.zone_id.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            {{ form.building_id.label(class='form-label fw-semibold') }}
+                            {{ form.building_id(class='form-select') }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.room_id.label(class='form-label fw-semibold') }}
+                            {{ form.room_id(class='form-select') }}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            {{ form.latitude.label(class='form-label fw-semibold') }}
+                            {{ form.latitude(class='form-control', placeholder='e.g., 31.5204') }}
+                            {% for error in form.latitude.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.longitude.label(class='form-label fw-semibold') }}
+                            {{ form.longitude(class='form-control', placeholder='e.g., 74.3587') }}
+                            {% for error in form.longitude.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin.locations') }}" class="btn btn-outline-secondary">Cancel</a>
+                        {{ form.submit(class='btn btn-primary') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

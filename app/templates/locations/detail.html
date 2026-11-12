@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ location.location_name }}{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <h1 class="h3 fw-bold mb-2">{{ location.location_name }}</h1>
+                <p class="mb-1"><strong>Campus Zone:</strong> {{ location.zone.zone_name if location.zone else 'N/A' }}</p>
+                {% if location.building %}
+                    <p class="mb-1">
+                        <strong>Building:</strong>
+                        <a href="{{ url_for('locations.building_detail', id=location.building.id) }}">{{ location.building.building_name }}</a>
+                    </p>
+                {% endif %}
+                {% if location.room %}
+                    <p class="mb-1"><strong>Room:</strong> {{ location.room.room_number }}</p>
+                {% endif %}
+                {% if location.latitude is not none and location.longitude is not none %}
+                    <p class="small text-muted mt-2 mb-0">
+                        <i class="bi bi-compass me-1"></i>Coordinates: {{ location.latitude }}, {{ location.longitude }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5 bg-secondary-subtle rounded">
+                <i class="bi bi-map fs-1 text-secondary"></i>
+                <h2 class="h6 fw-bold mt-2">Campus Map Preview</h2>
+                <p class="small text-muted mb-0">
+                    {% if location.latitude is not none and location.longitude is not none %}
+                        Pinned at ({{ location.latitude }}, {{ location.longitude }})
+                    {% else %}
+                        Map coordinates not configured for this location.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h2 class="h5 fw-bold mb-0">Reports at This Location ({{ reports|length }})</h2>
+                <a href="{{ url_for('locations.index') }}" class="btn btn-sm btn-outline-secondary">All Locations</a>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for report in reports %}
+                    <a href="{{ url_for('items.detail', id=report.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-{{ 'danger' if report.report_type.type_name|lower == 'lost' else 'success' }} me-1">
+                                {{ report.report_type.type_name|title }}
+                            </span>
+                            <span class="fw-semibold">{{ report.title }}</span>
+                            <div class="small text-muted">
+                                {{ report.created_at.strftime('%Y-%m-%d') if report.created_at else '' }}
+                            </div>
+                        </div>
+                        <span class="badge bg-secondary">{{ report.status.status_name|title }}</span>
+                    </a>
+                {% else %}
+                    <div class="list-group-item text-muted">No item reports recorded at this location yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

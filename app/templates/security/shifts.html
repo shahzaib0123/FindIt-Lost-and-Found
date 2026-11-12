@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Shift Schedule{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 fw-bold mb-0">Security Shift Schedule</h1>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('security.dashboard') }}" class="btn btn-outline-secondary btn-sm">Dashboard</a>
+        <a href="{{ url_for('security.create_shift') }}" class="btn btn-primary btn-sm">Schedule Shift</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Security Staff</th>
+                    <th>Patrol Zone</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shift in shifts %}
+                    <tr>
+                        <td>{{ shift.shift_date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ shift.start_time.strftime('%H:%M') }}</td>
+                        <td>{{ shift.end_time.strftime('%H:%M') }}</td>
+                        <td>{{ shift.staff.badge_no }} ({{ shift.staff.user.username }})</td>
+                        <td>{{ shift.patrol_zone.zone_name }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">No shifts scheduled yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h1 class="h2 fw-bold mb-1">Admin Control Panel</h1>
+        <p class="text-muted mb-0">System overview, moderation, classification management, and audit logs.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('admin.users') }}" class="btn btn-outline-dark btn-sm">Users</a>
+        <a href="{{ url_for('admin.reports') }}" class="btn btn-outline-danger btn-sm">User Complaints</a>
+        <a href="{{ url_for('admin.moderation') }}" class="btn btn-outline-warning text-dark btn-sm">Moderation</a>
+        <a href="{{ url_for('admin.audit_log') }}" class="btn btn-outline-secondary btn-sm">Audit Log</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Registered Users</div>
+                <div class="display-6 fw-bold">{{ stats.users }}</div>
+                <a href="{{ url_for('admin.users') }}" class="small text-decoration-none">Manage users &rarr;</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Item Reports</div>
+                <div class="display-6 fw-bold">{{ stats.reports }}</div>
+                <a href="{{ url_for('items.index') }}" class="small text-decoration-none">Browse reports &rarr;</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Total Claims</div>
+                <div class="display-6 fw-bold">{{ stats.claims }}</div>
+                <a href="{{ url_for('search.matches') }}" class="small text-decoration-none">View matches &rarr;</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Pending Complaints</div>
+                <div class="display-6 fw-bold text-danger">{{ stats.pending_user_reports }}</div>
+                <a href="{{ url_for('admin.reports') }}" class="small text-decoration-none">Review reports &rarr;</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Categories</div>
+                    <div class="h4 fw-bold mb-0">{{ stats.categories }}</div>
+                </div>
+                <a href="{{ url_for('admin.categories') }}" class="btn btn-sm btn-outline-primary">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Brands</div>
+                    <div class="h4 fw-bold mb-0">{{ stats.brands }}</div>
+                </div>
+                <a href="{{ url_for('admin.brands') }}" class="btn btn-sm btn-outline-primary">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Campus Locations</div>
+                    <div class="h4 fw-bold mb-0">{{ stats.locations }}</div>
+                </div>
+                <a href="{{ url_for('admin.locations') }}" class="btn btn-sm btn-outline-primary">Manage</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 fw-bold mb-0">Recent Audit Activity</h2>
+        <a href="{{ url_for('admin.audit_log') }}" class="small text-decoration-none">Full audit log</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in recent_audit %}
+                    <tr>
+                        <td class="small text-muted">{{ log.created_at.strftime('%Y-%m-%d %H:%M') if log.created_at else '' }}</td>
+                        <td>{{ log.user.username if log.user else 'System' }}</td>
+                        <td><code>{{ log.action }}</code></td>
+                        <td class="small">{{ log.entity_type or '-' }} #{{ log.entity_id or '-' }}</td>
+                        <td class="small text-muted">{{ log.ip_address or '-' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">No audit entries recorded yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
